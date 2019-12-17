@@ -1,0 +1,4 @@
+
+dev:
+	CHALLENGE_MASTER_TOKEN=123 go run .
+
