@@ -7,7 +7,8 @@ import (
 
 func RegisterRoutes(m *martini.ClassicMartini) {
 	m.Get("/_healthcheck", HealthCheck)
-	m.Group("/challenge", func (r martini.Router) {
+	m.Group("/challenge", func(r martini.Router) {
+		r.Get("/all", GetAllChallenges)
 		r.Post("/upload", UploadChallenge)
 	}, middleware.RequireToken)
 }
