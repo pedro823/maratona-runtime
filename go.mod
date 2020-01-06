@@ -9,6 +9,7 @@ require (
 	github.com/go-pg/pg/v9 v9.1.0
 	github.com/golang/protobuf v1.3.2 // indirect
 	github.com/pkg/errors v0.8.1
+	github.com/subosito/gotenv v1.2.0
 	golang.org/x/net v0.0.0-20190923162816-aa69164e4478 // indirect
 	golang.org/x/sys v0.0.0-20191010194322-b09406accb47 // indirect
 	golang.org/x/text v0.3.2 // indirect
