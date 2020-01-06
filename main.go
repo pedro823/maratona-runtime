@@ -1,6 +1,9 @@
 package main
 
 import (
+	"log"
+	"os"
+
 	"github.com/go-martini/martini"
 	"github.com/subosito/gotenv"
 
@@ -16,6 +19,7 @@ func main() {
 
 	m := martini.Classic()
 	m.Map(db)
+	m.Map(util.NewTimeLogger(log.New(os.Stdout, "[maratona-runtime] ", 0)))
 	m.Use(util.UseJSONRenderer(nil))
 
 	handlers.RegisterRoutes(m)
