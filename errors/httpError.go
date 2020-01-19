@@ -2,11 +2,13 @@ package errors
 
 import (
 	"encoding/json"
+	"github.com/pedro823/maratona-runtime/util"
 	"net/http"
 )
 
 type HTTPError interface {
 	WriteResponse(res http.ResponseWriter)
+	WriteJSON(res *util.JSONRenderer)
 }
 
 type genericHTTPError struct {
@@ -26,6 +28,10 @@ func (e genericHTTPError) WriteResponse(res http.ResponseWriter) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+func (e genericHTTPError) WriteJSON(res *util.JSONRenderer) {
+	res.JSON(e.status, map[string]string{"error": e.reason})
 }
 
 func NewHTTPError(status int, reason string) HTTPError {
