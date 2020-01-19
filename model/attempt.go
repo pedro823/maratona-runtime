@@ -9,10 +9,11 @@ const (
 	TimeLimitExceeded
 	MemoryLimitExceeded
 	CompilerError
+	RuntimeError
 )
 
 type ChallengeAttempt struct {
-	ID        int64
+	ID        int64 `pg:"pk"`
 	User      *User
 	Challenge *Challenge
 	Result    *ChallengeResult

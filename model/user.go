@@ -3,7 +3,7 @@ package model
 import "fmt"
 
 type User struct {
-	ID    int64
+	ID    int64 `pg:"pk"`
 	CTFID string
 }
 
