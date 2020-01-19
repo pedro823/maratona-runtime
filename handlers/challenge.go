@@ -1,6 +1,10 @@
 package handlers
 
 import (
+	"encoding/json"
+	"github.com/pedro823/maratona-runtime/errors"
+	"github.com/pedro823/maratona-runtime/handlers/requests"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/go-pg/pg/v9"
@@ -21,6 +25,29 @@ func GetAllChallenges(req *http.Request, res *util.JSONRenderer, logger *util.Ti
 	res.JSON(200, responses.AllChallengesResponse{Challenges: challenges})
 }
 
-func UploadChallenge(req *http.Request, res http.ResponseWriter, logger *util.TimeLogger, db *pg.DB) {
+func UploadChallenge(req *http.Request, res *util.JSONRenderer, logger *util.TimeLogger, db *pg.DB) {
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		defer logger.TimePrintf("Error reading request body: %v", err)
+		errors.NewHTTPError(http.StatusBadRequest, "Could not read request body").WriteJSON(res)
+		return
+	}
+	var formattedRequest requests.CreateChallengeRequest
 
+	err = json.Unmarshal(body, &formattedRequest)
+	if err != nil {
+		defer logger.TimePrintf("Malformed request to UploadChallenge: %v", err)
+		errors.NewHTTPError(http.StatusBadRequest, err.Error()).WriteJSON(res)
+		return
+	}
+
+	challenge := &model.Challenge{Title: formattedRequest.Title, Description: formattedRequest.Description}
+	err = db.Insert(challenge)
+	if err != nil {
+		defer logger.TimePrintf("Could not insert new challenge into database. Service unavailable? Error: %v", err)
+		errors.NewHTTPError(http.StatusInternalServerError, "Could not write challenge to database").WriteJSON(res)
+		return
+	}
+
+	res.JSON(201, nil)
 }
