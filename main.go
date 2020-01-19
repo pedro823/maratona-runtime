@@ -13,13 +13,19 @@ import (
 )
 
 func main() {
-	gotenv.Load()
+	logger := log.New(os.Stdout, "[maratona-runtime] ", 0)
 
-	db := database.NewDatabase()
+	err := gotenv.Load()
+	if err != nil {
+		logger.Printf("[WARNING] error while loading env file: %s", err.Error())
+	}
+
+	db := database.NewDatabase(logger)
 
 	m := martini.Classic()
 	m.Map(db)
-	m.Map(util.NewTimeLogger(log.New(os.Stdout, "[maratona-runtime] ", 0)))
+	m.Logger(logger)
+	m.Map(util.NewTimeLogger(logger))
 	m.Use(util.UseJSONRenderer(nil))
 
 	handlers.RegisterRoutes(m)

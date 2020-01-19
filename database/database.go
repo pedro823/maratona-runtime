@@ -1,6 +1,7 @@
 package database
 
 import (
+	"log"
 	"os"
 
 	"github.com/go-pg/pg/v9"
@@ -14,7 +15,7 @@ const (
 	databaseAddress envVarKey = "DATABASE_ADDRESS"
 )
 
-func NewDatabase() *pg.DB {
+func NewDatabase(logger *log.Logger) *pg.DB {
 	user := getEnvOrDefault(databaseUserEnv, "postgres")
 	password := getEnvOrDefault(databasePassEnv, "secretpass")
 	address := getEnvOrDefault(databaseAddress, "localhost:5432")
@@ -25,7 +26,7 @@ func NewDatabase() *pg.DB {
 		Password: password,
 	})
 
-	err := CreateSchema(db)
+	err := CreateSchema(db, logger)
 	if err != nil {
 		panic(err)
 	}
