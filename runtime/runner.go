@@ -75,6 +75,10 @@ func createInputFile(input []byte) (*os.File, error) {
 		return file, err
 	}
 	_, err = file.Write(input)
+	if err != nil {
+		return file, err
+	}
+	_, err = file.Seek(0, 0)
 	return file, err
 }
 

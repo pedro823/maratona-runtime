@@ -17,3 +17,6 @@ prod:
 
 build-prod:
 	go build .
+
+test:
+	go test -count=5 ./...

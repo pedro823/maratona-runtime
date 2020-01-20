@@ -68,6 +68,6 @@ func (c *CPlusPlus11) Compile(program []byte) ([]string, TempFiles, error) {
 
 type Java8 struct{}
 
-func (c *Java8) Compile(programFile *os.File) ([]string, error) {
-
-}
+//func (c *Java8) Compile(programFile *os.File) ([]string, error) {
+//
+//}
