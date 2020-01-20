@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 type AvailableCompiler interface {
@@ -56,9 +57,9 @@ func (c *CPlusPlus11) Compile(program []byte) ([]string, TempFiles, error) {
 
 	executableName := fmt.Sprintf("%s.exe", file.Name())
 	cmd := exec.Command("g++", "-std=c++11", file.Name(), "-o", executableName)
-	output, err := cmd.Output()
+	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return nil, nil, errors.New(string(output))
+		return nil, tempFiles, errors.New(string(output))
 	}
 
 	tempFiles = append(tempFiles, executableName)
@@ -71,3 +72,35 @@ type Java8 struct{}
 //func (c *Java8) Compile(programFile *os.File) ([]string, error) {
 //
 //}
+
+type Go struct{}
+
+func (c *Go) Compile(program []byte) ([]string, TempFiles, error) {
+	file, err := ioutil.TempFile("", "attempt*.go")
+	if err != nil {
+		return nil, nil, err
+	}
+
+	tempFiles := make(TempFiles, 0, 2)
+	tempFiles = append(tempFiles, file.Name())
+
+	_, err = file.Write(program)
+	if err != nil {
+		return nil, tempFiles, err
+	}
+
+	executableName := c.stripExtension(file.Name())
+	cmd := exec.Command("go", "build", "-o", executableName, file.Name())
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return nil, tempFiles, errors.New(string(output))
+	}
+
+	tempFiles = append(tempFiles, executableName)
+	return []string{executableName}, tempFiles, nil
+}
+
+func (c *Go) stripExtension(fileName string) string {
+	splitName := strings.Split(fileName, ".")
+	return strings.Join(splitName[:len(splitName) - 1], "")
+}

@@ -11,6 +11,7 @@ import (
 const (
 	runtimeSuccessDir = "testData/runtimeSuccess"
 	programOutputDir = "testData/programOutput"
+	timeLimitExceededDir = "testData/timeLimitExceeded"
 )
 
 func TestProgramOutput(t *testing.T) {
@@ -58,7 +59,20 @@ func TestRuntimeSuccess(t *testing.T) {
 }
 
 func TestTimeLimitExceeded(t *testing.T) {
+	challengeAttempt := readFromFile(t, timeLimitExceededDir, "attempt.go")
+	challenge := model.Challenge{
+		Timeout:     1 * time.Second,
+		Input:       &model.ChallengeInput{},
+		Output:      &model.ChallengeOutput{},
+	}
+	resultChan := make(chan model.ChallengeResult)
 
+	go CompileAndRun(challengeAttempt, challenge, &Go{}, resultChan)
+
+	result := <-resultChan
+	if result.Status != model.TimeLimitExceeded {
+		t.Fatalf("Expected result to be a Time Limit Exceeded, got %v", result)
+	}
 }
 
 func readFromFile(t *testing.T, directory, file string) []byte {
