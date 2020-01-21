@@ -1,0 +1,8 @@
+FROM golang:alpine AS tester
+
+RUN apk add --update build-base alpine-sdk
+RUN apk add python3
+
+WORKDIR /test
+COPY . /test
+CMD go test ./...

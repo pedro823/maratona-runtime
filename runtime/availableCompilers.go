@@ -9,6 +9,10 @@ import (
 	"strings"
 )
 
+var (
+	cPlusPlusArguments = []string{"-static", "-lm", "-x", "c++", "-O2", "-std=c++11"}
+)
+
 type AvailableCompiler interface {
 	Compile(program []byte) ([]string, TempFiles, error)
 }
@@ -56,7 +60,7 @@ func (c *CPlusPlus11) Compile(program []byte) ([]string, TempFiles, error) {
 	}
 
 	executableName := fmt.Sprintf("%s.exe", file.Name())
-	cmd := exec.Command("g++", "-std=c++11", file.Name(), "-o", executableName)
+	cmd := exec.Command("g++", append(cPlusPlusArguments, file.Name(), "-o", executableName)...)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		return nil, tempFiles, errors.New(string(output))

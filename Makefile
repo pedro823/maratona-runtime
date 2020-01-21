@@ -20,3 +20,7 @@ build-prod:
 
 test:
 	go test -count=5 ./...
+
+docker_test:
+	docker build -f Dockerfile.testing . -t maratona-runtime-test
+	docker run --rm maratona-runtime-test
