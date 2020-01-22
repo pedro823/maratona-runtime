@@ -12,6 +12,7 @@ const (
 	runtimeSuccessDir = "testData/runtimeSuccess"
 	programOutputDir = "testData/programOutput"
 	timeLimitExceededDir = "testData/timeLimitExceeded"
+	wrongAnswerDir = "testData/wrongAnswer"
 )
 
 func TestProgramOutput(t *testing.T) {
@@ -72,6 +73,27 @@ func TestTimeLimitExceeded(t *testing.T) {
 	result := <-resultChan
 	if result.Status != model.TimeLimitExceeded {
 		t.Fatalf("Expected result to be a Time Limit Exceeded, got %v", result)
+	}
+}
+
+func TestWrongAnswer(t *testing.T) {
+	challengeAttempt := readFromFile(t, wrongAnswerDir, "attempt.py")
+	input := readFromFile(t, wrongAnswerDir, "input.txt")
+	output := readFromFile(t, wrongAnswerDir, "output.txt")
+
+	challenge := model.Challenge{
+		Timeout: 1 * time.Second,
+		Input: &model.ChallengeInput{RawData:input},
+		Output: &model.ChallengeOutput{RawData:output},
+	}
+
+	resultChan := make(chan model.ChallengeResult)
+
+	go CompileAndRun(challengeAttempt, challenge, &Python3{}, resultChan)
+
+	result := <-resultChan
+	if result.Status != model.WrongAnswer {
+		t.Fatalf("Expected result to be a Wrong Answer, got %v", result)
 	}
 }
 
