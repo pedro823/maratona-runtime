@@ -24,6 +24,9 @@ test:
 docker_test: .docker_test_build
 	docker run --rm maratona-runtime-test
 
-.docker_test_build: runtime/
+docker_test_verbose: .docker_test_build
+	docker run --rm maratona-runtime-test go test --count=5 -v ./...
+
+.docker_test_build: Dockerfile.testing runtime/
 	docker build -f Dockerfile.testing . -t maratona-runtime-test
 	touch ".docker_test_build"

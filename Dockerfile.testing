@@ -4,5 +4,8 @@ RUN apk add --update build-base alpine-sdk
 RUN apk add python3
 
 WORKDIR /test
-COPY . /test
+COPY go.mod .
+COPY go.sum .
+RUN go mod download
+COPY . .
 CMD go test ./...
