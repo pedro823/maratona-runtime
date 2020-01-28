@@ -15,7 +15,14 @@ const (
 	wrongAnswerDir = "testData/wrongAnswer"
 )
 
+func timeTrack(t *testing.T, start time.Time, name string) {
+	elapsed := time.Since(start)
+	t.Logf("%s: %s", name, elapsed)
+}
+
 func TestProgramOutput(t *testing.T) {
+	t.Parallel()
+
 	outputBytes := readFromFile(t, programOutputDir, "output.txt")
 	challengeAttempt := readFromFile(t, programOutputDir, "attempt.py")
 
@@ -28,6 +35,8 @@ func TestProgramOutput(t *testing.T) {
 	}
 
 	resultChan := make(chan model.ChallengeResult)
+
+	defer timeTrack(t, time.Now(), "TestProgramOutput")
 	go CompileAndRun(challengeAttempt, challenge, &Python3{}, resultChan)
 
 	result := <-resultChan
@@ -37,6 +46,8 @@ func TestProgramOutput(t *testing.T) {
 }
 
 func TestRuntimeSuccess(t *testing.T) {
+	t.Parallel()
+
 	inputBytes := readFromFile(t, runtimeSuccessDir, "input.txt")
 	outputBytes := readFromFile(t, runtimeSuccessDir, "output.txt")
 	challengeAttempt := readFromFile(t, runtimeSuccessDir, "attempt.cc")
@@ -51,6 +62,7 @@ func TestRuntimeSuccess(t *testing.T) {
 
 	resultChan := make(chan model.ChallengeResult)
 
+	defer timeTrack(t, time.Now(), "TestRuntimeSuccess")
 	go CompileAndRun(challengeAttempt, challenge, &CPlusPlus11{}, resultChan)
 
 	result := <-resultChan
@@ -60,6 +72,8 @@ func TestRuntimeSuccess(t *testing.T) {
 }
 
 func TestTimeLimitExceeded(t *testing.T) {
+	t.Parallel()
+
 	challengeAttempt := readFromFile(t, timeLimitExceededDir, "attempt.go")
 	challenge := model.Challenge{
 		Timeout:     1 * time.Second,
@@ -68,6 +82,7 @@ func TestTimeLimitExceeded(t *testing.T) {
 	}
 	resultChan := make(chan model.ChallengeResult)
 
+	defer timeTrack(t, time.Now(), "TestTimeLimitExceeded")
 	go CompileAndRun(challengeAttempt, challenge, &Go{}, resultChan)
 
 	result := <-resultChan
@@ -77,24 +92,28 @@ func TestTimeLimitExceeded(t *testing.T) {
 }
 
 func TestWrongAnswer(t *testing.T) {
+	t.Parallel()
+
 	challengeAttempt := readFromFile(t, wrongAnswerDir, "attempt.py")
 	input := readFromFile(t, wrongAnswerDir, "input.txt")
 	output := readFromFile(t, wrongAnswerDir, "output.txt")
 
 	challenge := model.Challenge{
-		Timeout: 1 * time.Second,
+		Timeout: 2 * time.Second,
 		Input: &model.ChallengeInput{RawData:input},
 		Output: &model.ChallengeOutput{RawData:output},
 	}
 
 	resultChan := make(chan model.ChallengeResult)
 
+	defer timeTrack(t, time.Now(), "TestWrongAnswer")
 	go CompileAndRun(challengeAttempt, challenge, &Python3{}, resultChan)
 
 	result := <-resultChan
 	if result.Status != model.WrongAnswer {
 		t.Fatalf("Expected result to be a Wrong Answer, got %v", result)
 	}
+	t.Logf("In Wrong answer: %s", result.Reason)
 }
 
 func readFromFile(t *testing.T, directory, file string) []byte {
