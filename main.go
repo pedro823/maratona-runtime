@@ -27,6 +27,7 @@ func main() {
 	m.Logger(logger)
 	m.Map(util.NewTimeLogger(logger))
 	m.Use(util.UseJSONRenderer(nil))
+	m.Use(util.UseContextMap())
 
 	handlers.RegisterRoutes(m)
 	m.Run()
