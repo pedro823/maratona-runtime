@@ -28,7 +28,7 @@ func compareOutputs(expected, actual []byte) model.ChallengeResult {
 }
 
 func wrongAnswer(line int, expected []byte, actual []byte) model.ChallengeResult {
-	reason := fmt.Sprintf("Wrong answer on line %d: expected %s, got %s", line, string(expected), string(actual))
+	reason := fmt.Sprintf("Wrong answer on line %d: expected %q, got %q", line, string(expected), string(actual))
 	return model.ChallengeResult{Status: model.WrongAnswer, Reason: reason}
 }
 

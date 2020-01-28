@@ -27,7 +27,7 @@ func (t TempFiles) Clean() {
 
 type Python3 struct{}
 
-func (c *Python3) Compile(program []byte) ([]string, TempFiles, error) {
+func (c Python3) Compile(program []byte) ([]string, TempFiles, error) {
 	file, err := ioutil.TempFile("", "attempt*.py")
 	if err != nil {
 		return nil, nil, err
@@ -45,7 +45,7 @@ func (c *Python3) Compile(program []byte) ([]string, TempFiles, error) {
 
 type CPlusPlus11 struct{}
 
-func (c *CPlusPlus11) Compile(program []byte) ([]string, TempFiles, error) {
+func (c CPlusPlus11) Compile(program []byte) ([]string, TempFiles, error) {
 	file, err := ioutil.TempFile("", "attempt*.cc")
 	if err != nil {
 		return nil, nil, err
@@ -79,7 +79,7 @@ type Java8 struct{}
 
 type Go struct{}
 
-func (c *Go) Compile(program []byte) ([]string, TempFiles, error) {
+func (c Go) Compile(program []byte) ([]string, TempFiles, error) {
 	file, err := ioutil.TempFile("", "attempt*.go")
 	if err != nil {
 		return nil, nil, err
@@ -104,7 +104,7 @@ func (c *Go) Compile(program []byte) ([]string, TempFiles, error) {
 	return []string{executableName}, tempFiles, nil
 }
 
-func (c *Go) stripExtension(fileName string) string {
+func (c Go) stripExtension(fileName string) string {
 	splitName := strings.Split(fileName, ".")
-	return strings.Join(splitName[:len(splitName) - 1], "")
+	return strings.Join(splitName[:len(splitName)-1], "")
 }
