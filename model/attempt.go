@@ -13,7 +13,7 @@ const (
 )
 
 type ChallengeAttempt struct {
-	ID        int64 `pg:"pk"`
+	Hash      string `pg:"pk"`
 	User      *User
 	Challenge *Challenge
 	Result    *ChallengeResult
