@@ -7,6 +7,6 @@ require (
 	github.com/go-martini/martini v0.0.0-20170121215854-22fa46961aab
 	github.com/go-pg/pg v8.0.6+incompatible
 	github.com/go-pg/pg/v9 v9.1.0
-	github.com/pkg/errors v0.8.1
+	github.com/stretchr/testify v1.4.0 // indirect
 	github.com/subosito/gotenv v1.2.0
 )
